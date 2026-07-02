@@ -10,7 +10,8 @@ int main(void) {
   SetConfigFlags(FLAG_MSAA_4X_HINT); // Anti-aliasing
   InitWindow(screenWidth, screenHeight, "Pong Game");
 
-  Vector2 rectanglePosition = {400, 250};
+  Vector2 rectanglePosition = {50, 250};
+  Vector2 rectangle2Position = {750, 250};
   Vector2 ballPosition = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
   Vector2 ballSpeed = {5.0f, 5.0f};
   int ballRadius = 10;
@@ -19,10 +20,11 @@ int main(void) {
 
   SetTargetFPS(60);
 
-  // Loop principal do jogo
   while (!WindowShouldClose()) {
 
+    // Desenha as formas geométricas e verifica colisões
     Rectangle retangulo = {rectanglePosition.x, rectanglePosition.y, 15, 60};
+    Rectangle retangulo2 = {rectangle2Position.x, rectangle2Position.y, 15, 60};
 
     if (IsKeyPressed(KEY_SPACE))
       pause = !pause;
@@ -39,14 +41,18 @@ int main(void) {
           (ballPosition.y <= ballRadius))
         ballSpeed.y *= -1.0f;
 
+      // Aplica a colisão da bola com os retângulos
       if (CheckCollisionCircleRec(ballPosition, (float)ballRadius, retangulo))
+        ballSpeed.x *= -1.0f;
+
+      if (CheckCollisionCircleRec(ballPosition, (float)ballRadius, retangulo2))
         ballSpeed.x *= -1.0f;
     }
 
     else
       framesCounter++;
 
-    rectanglePosition = GetMousePosition();
+    rectanglePosition.y = GetMousePosition().y;
 
     // Desenha a tela e outros componentes a partir daqui
     BeginDrawing();
@@ -54,8 +60,11 @@ int main(void) {
     ClearBackground(WHITE);
 
     DrawRectangleV(rectanglePosition, (Vector2){15, 60}, RED);
+    DrawRectangleV(rectangle2Position, (Vector2){15, 60}, BLUE);
     DrawCircleV(ballPosition, (float)ballRadius, MAROON);
-    DrawText("PRESS SPACE", 10, GetScreenHeight() - 25, 20, LIGHTGRAY);
+
+    DrawText("PRESS SPACE TO PAUSE THE GAME", 10, GetScreenHeight() - 25, 20,
+             LIGHTGRAY);
 
     // Mensagem de pausa que pisca a cada 0.5 segundos
     // Se o resto da divisão for 1, exibe o texto. Caso contrário, não exibe
