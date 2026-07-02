@@ -7,7 +7,7 @@ int main(void) {
   const int screenWidth = 800;
   const int screenHeight = 500;
 
-  SetConfigFlags(FLAG_MSAA_4X_HINT); // Anti-aliasing
+  SetConfigFlags(FLAG_MSAA_4X_HINT); // Aplica Anti-aliasing
   InitWindow(screenWidth, screenHeight, "Pong Game");
 
   Vector2 rectanglePosition = {50, 250};
@@ -17,19 +17,24 @@ int main(void) {
   int ballRadius = 10;
   bool pause = 0;
   int framesCounter = 0;
+  float botSpeed = 4.5f;
 
   SetTargetFPS(60);
 
   while (!WindowShouldClose()) {
-
-    // Desenha as formas geométricas e verifica colisões
-    Rectangle retangulo = {rectanglePosition.x, rectanglePosition.y, 15, 60};
-    Rectangle retangulo2 = {rectangle2Position.x, rectangle2Position.y, 15, 60};
+    Rectangle retangulo = {rectanglePosition.x, rectanglePosition.y, 15,
+                           60}; // Jogador
+    Rectangle retangulo2 = {rectangle2Position.x, rectangle2Position.y, 15,
+                            60}; // Bot
 
     if (IsKeyPressed(KEY_SPACE))
       pause = !pause;
 
     if (!pause) {
+      // Movimento do retângulo do jogador travado na direção vertical
+      rectanglePosition.y = GetMousePosition().y;
+
+      // Aplica velocidade na bola
       ballPosition.x += ballSpeed.x;
       ballPosition.y += ballSpeed.y;
 
@@ -47,12 +52,23 @@ int main(void) {
 
       if (CheckCollisionCircleRec(ballPosition, (float)ballRadius, retangulo2))
         ballSpeed.x *= -1.0f;
+
+      // Lógica de movimento do bot para seguir a bola
+      if (ballPosition.y < rectangle2Position.y)
+        rectangle2Position.y -= botSpeed;
+      else if (ballPosition.y > rectangle2Position.y)
+        rectangle2Position.y += botSpeed;
+
+      // Impede que o bot saida da tela
+      if (rectangle2Position.y < 0)
+        rectangle2Position.y = 0;
+      if (rectangle2Position.y > GetScreenHeight() - 60)
+        rectangle2Position.y = GetScreenHeight() - 60;
     }
 
-    else
+    else {
       framesCounter++;
-
-    rectanglePosition.y = GetMousePosition().y;
+    }
 
     // Desenha a tela e outros componentes a partir daqui
     BeginDrawing();
