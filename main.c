@@ -9,10 +9,14 @@ int main(void) {
 
   InitWindow(screenWidth, screenHeight, "Pong Game");
 
+  Vector2 rectanglePosition = {400, 250};
+
+  SetTargetFPS(60);
+
   // Roda o jogo até que seja fechado
   while (!WindowShouldClose()) {
 
-    Vector2 rectanglePosition = {400, 250};
+    rectanglePosition = GetMousePosition();
 
     // Desenha a tela e outros componentes a partir daqui
     BeginDrawing();
