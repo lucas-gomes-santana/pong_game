@@ -22,6 +22,8 @@ int main(void) {
   // Loop principal do jogo
   while (!WindowShouldClose()) {
 
+    Rectangle retangulo = {rectanglePosition.x, rectanglePosition.y, 15, 60};
+
     if (IsKeyPressed(KEY_SPACE))
       pause = !pause;
 
@@ -35,7 +37,10 @@ int main(void) {
         ballSpeed.x *= -1.0f;
       if ((ballPosition.y >= (GetScreenHeight() - ballRadius)) ||
           (ballPosition.y <= ballRadius))
-        ballSpeed.y *= -0.95f;
+        ballSpeed.y *= -1.0f;
+
+      if (CheckCollisionCircleRec(ballPosition, (float)ballRadius, retangulo))
+        ballSpeed.x *= -1.0f;
     }
 
     else
@@ -50,8 +55,7 @@ int main(void) {
 
     DrawRectangleV(rectanglePosition, (Vector2){15, 60}, RED);
     DrawCircleV(ballPosition, (float)ballRadius, MAROON);
-    DrawText("PRESS SPACE to PAUSE BALL MOVEMENT", 10, GetScreenHeight() - 25,
-             20, LIGHTGRAY);
+    DrawText("PRESS SPACE", 10, GetScreenHeight() - 25, 20, LIGHTGRAY);
 
     // Mensagem de pausa que pisca a cada 0.5 segundos
     // Se o resto da divisão for 1, exibe o texto. Caso contrário, não exibe
