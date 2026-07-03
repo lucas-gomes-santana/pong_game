@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <math.h>
 
 // OBS: X = posição horizontal, Y = posição vertical
 
@@ -13,13 +14,15 @@ int main(void) {
   Vector2 rectanglePosition = {50, 250};
   Vector2 rectangle2Position = {750, 250};
   Vector2 ballPosition = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
-  Vector2 ballSpeed = {5.0f, 5.0f};
+  Vector2 ballSpeed = {4.0f, 4.0f};
   int ballRadius = 10;
   bool pause = 0;
   int framesCounter = 0;
-  float botSpeed = 4.5f;
+  float botSpeed = 5.0f;
   int playerScore = 0;
   int botScore = 0;
+  const float speedIncrease = 1.1f; // 10% de aumento por rebatida
+  const float maxSpeed = 7.0f;
 
   SetTargetFPS(60);
 
@@ -40,18 +43,21 @@ int main(void) {
       ballPosition.x += ballSpeed.x;
       ballPosition.y += ballSpeed.y;
 
-      // Bola saiu pela esquerda = ponto pro bot
+      // Adiciona pontuação e reinicia a bola para o centro após sair da tela
       if (ballPosition.x <= ballRadius) {
         botScore++;
         ballPosition.x = GetScreenWidth() / 2.0f;
         ballPosition.y = GetScreenHeight() / 2.0f;
+        ballSpeed.x = 4.0f;
+        ballSpeed.y = 4.0f;
       }
 
-      // Bola saiu pela direita = ponto pro player
       if (ballPosition.x >= (GetScreenWidth() - ballRadius)) {
         playerScore++;
         ballPosition.x = GetScreenWidth() / 2.0f;
         ballPosition.y = GetScreenHeight() / 2.0f;
+        ballSpeed.x = 4.0f;
+        ballSpeed.y = 4.0f;
       }
 
       // Colisão da bola em cima e baixo da tela
@@ -59,12 +65,23 @@ int main(void) {
           (ballPosition.y <= ballRadius))
         ballSpeed.y *= -1.0f;
 
-      // Aplica a colisão da bola com os retângulos
-      if (CheckCollisionCircleRec(ballPosition, (float)ballRadius, retangulo))
+      // Aplica a colisão da bola com os retângulos e aumenta a velocidade dela
+      if (CheckCollisionCircleRec(ballPosition, (float)ballRadius, retangulo)) {
         ballSpeed.x *= -1.0f;
+        if (fabsf(ballSpeed.x) < maxSpeed) {
+          ballSpeed.x *= speedIncrease;
+          ballSpeed.y *= speedIncrease;
+        }
+      }
 
-      if (CheckCollisionCircleRec(ballPosition, (float)ballRadius, retangulo2))
+      if (CheckCollisionCircleRec(ballPosition, (float)ballRadius,
+                                  retangulo2)) {
         ballSpeed.x *= -1.0f;
+        if (fabsf(ballSpeed.x) < maxSpeed) {
+          ballSpeed.x *= speedIncrease;
+          ballSpeed.y *= speedIncrease;
+        }
+      }
 
       // Lógica de movimento do bot para seguir a bola
       if (ballPosition.y < rectangle2Position.y)
