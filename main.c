@@ -124,7 +124,8 @@ int main(void) {
 
     DrawText(TextFormat("%i", playerScore), 100, 20, 40, RED);
     DrawText(TextFormat("%i", botScore), 700, 20, 40, BLUE);
-    DrawText("PRESS SPACE TO PAUSE THE GAME", 10, GetScreenHeight() - 25, 20,
+    DrawText("PRESS ESCAPE TO EXIT", 10, GetScreenHeight() - 45, 17, LIGHTGRAY);
+    DrawText("PRESS SPACE TO PAUSE THE GAME", 10, GetScreenHeight() - 25, 17,
              LIGHTGRAY);
 
     // Mensagem de pausa que pisca a cada 0.5 segundos
