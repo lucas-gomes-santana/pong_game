@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include <math.h>
+#include <stdbool.h>
 
 // OBS: X = posição horizontal, Y = posição vertical
 
@@ -24,9 +25,13 @@ int main(void) {
   const float speedIncrease = 1.1f; // 10% de aumento por rebatida
   const float maxSpeed = 7.0f;
 
+  SetExitKey(KEY_NULL);
+  bool exitWindowRequested = false;
+  bool exitWindow = false;
+
   SetTargetFPS(60);
 
-  while (!WindowShouldClose()) {
+  while (!exitWindow) {
     Rectangle retangulo = {rectanglePosition.x, rectanglePosition.y, 15,
                            60}; // Jogador
     Rectangle retangulo2 = {rectangle2Position.x, rectangle2Position.y, 15,
@@ -96,11 +101,19 @@ int main(void) {
         rectangle2Position.y = GetScreenHeight() - 60;
     }
 
-    else {
-      framesCounter++;
+    if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE))
+      exitWindowRequested = true;
+
+    if (exitWindowRequested) {
+      if (IsKeyPressed(KEY_Y))
+        exitWindow = true;
+      else if (IsKeyPressed(KEY_N))
+        exitWindowRequested = false;
     }
 
-    // Desenha a tela e outros componentes a partir daqui
+    else
+      framesCounter++;
+
     BeginDrawing();
 
     ClearBackground(WHITE);
@@ -119,9 +132,13 @@ int main(void) {
     if (pause && ((framesCounter / 30) % 2))
       DrawText("PAUSED", 350, 200, 30, GRAY);
 
-    DrawFPS(10, 10); // Exibe o fps no canto superiror esquerdo da tela
+    DrawFPS(10, 10);
 
-    // Termina o desenho da tela e componentes
+    if (exitWindowRequested) {
+      DrawRectangle(0, 100, screenWidth, 200, BLACK);
+      DrawText("DO YOU WANT TO QUIT? [Y/N]", 40, 180, 30, WHITE);
+    }
+
     EndDrawing();
   }
 
