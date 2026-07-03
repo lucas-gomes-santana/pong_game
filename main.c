@@ -18,6 +18,8 @@ int main(void) {
   bool pause = 0;
   int framesCounter = 0;
   float botSpeed = 4.5f;
+  int playerScore = 0;
+  int botScore = 0;
 
   SetTargetFPS(60);
 
@@ -38,10 +40,21 @@ int main(void) {
       ballPosition.x += ballSpeed.x;
       ballPosition.y += ballSpeed.y;
 
-      // Verificar colisão com as paredes para a bola quicar
-      if ((ballPosition.x >= (GetScreenWidth() - ballRadius)) ||
-          (ballPosition.x <= ballRadius))
-        ballSpeed.x *= -1.0f;
+      // Bola saiu pela esquerda = ponto pro bot
+      if (ballPosition.x <= ballRadius) {
+        botScore++;
+        ballPosition.x = GetScreenWidth() / 2.0f;
+        ballPosition.y = GetScreenHeight() / 2.0f;
+      }
+
+      // Bola saiu pela direita = ponto pro player
+      if (ballPosition.x >= (GetScreenWidth() - ballRadius)) {
+        playerScore++;
+        ballPosition.x = GetScreenWidth() / 2.0f;
+        ballPosition.y = GetScreenHeight() / 2.0f;
+      }
+
+      // Colisão da bola em cima e baixo da tela
       if ((ballPosition.y >= (GetScreenHeight() - ballRadius)) ||
           (ballPosition.y <= ballRadius))
         ballSpeed.y *= -1.0f;
@@ -79,6 +92,8 @@ int main(void) {
     DrawRectangleV(rectangle2Position, (Vector2){15, 60}, BLUE);
     DrawCircleV(ballPosition, (float)ballRadius, MAROON);
 
+    DrawText(TextFormat("%i", playerScore), 100, 20, 40, RED);
+    DrawText(TextFormat("%i", botScore), 700, 20, 40, BLUE);
     DrawText("PRESS SPACE TO PAUSE THE GAME", 10, GetScreenHeight() - 25, 20,
              LIGHTGRAY);
 
